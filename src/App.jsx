@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-const API = "http://localhost:8000";
-const WS  = "ws://localhost:8000";
+const API = "https://nexus-backend-production-1e49.up.railway.app";
+const WS  = "wss://nexus-backend-production-1e49.up.railway.app";
 
 const api = {
   async req(method, path, body, token) {
