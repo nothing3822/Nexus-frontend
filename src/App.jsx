@@ -515,13 +515,14 @@ function ConnectPage({ currentUser, token, onOpenDM, onPendChange }) {
     } catch (e) { msg(e.message || "Invalid link"); }
     finally { setPasteLoad(false); }
   };
+  const genLink = async () => {
     setGenL(true);
     try {
       const d = await api.post("/invites", { expiry_hours: 24, is_one_time: true, max_uses: 1 }, token);
       setML(`${window.location.origin}/join/${d.code}`);
     } catch (e) { msg(e.message); }
-    finally { setGenL(false); }
-  };
+    finally { setGenL(false); } 
+};
 
   const bStyle = (col, bg2) => ({ background: bg2 || `${col}22`, border: `1px solid ${col}44`, borderRadius: 8, padding: "8px 14px", color: col, cursor: "pointer", fontSize: 13, fontWeight: 600 });
 
