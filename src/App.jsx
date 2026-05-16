@@ -515,8 +515,6 @@ function ConnectPage({ currentUser, token, onOpenDM, onPendChange }) {
     } catch (e) { msg(e.message || "Invalid link"); }
     finally { setPasteLoad(false); }
   };
-
-  const genLink = async () => {
     setGenL(true);
     try {
       const d = await api.post("/invites", { expiry_hours: 24, is_one_time: true, max_uses: 1 }, token);
