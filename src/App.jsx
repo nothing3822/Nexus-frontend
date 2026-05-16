@@ -449,6 +449,8 @@ function ConnectPage({ currentUser, token, onOpenDM, onPendChange }) {
   const [myLink, setML] = useState("");
   const [genL, setGenL] = useState(false);
 
+  const [pasteLink, setPasteLink] = useState("");
+  const [pasteLoad, setPasteLoad] = useState(false);
   const loadAll = async () => {
     const [r, co] = await Promise.all([
       api.get("/connect/requests", token).catch(() => []),
@@ -499,8 +501,6 @@ function ConnectPage({ currentUser, token, onOpenDM, onPendChange }) {
     catch (e) { msg(e.message); }
   };
 
-  const [pasteLink, setPasteLink] = useState("");
-  const [pasteLoad, setPasteLoad] = useState(false);
 
   const joinByLink = async () => {
     if (!pasteLink.trim()) return;
@@ -645,8 +645,6 @@ export default function NexusApp() {
   const [showCR, setCR]   = useState(false);
   const [isFirst, setIF]  = useState(false);
 
-  if (loading) return <LoadingScreen onDone={() => setLoading(false)} />;
-  
   const logout = () => { localStorage.removeItem("nx_t"); localStorage.removeItem("nx_u"); setToken(""); setUser(null); };
 
   const onLogin = (u, t, goSet) => {
@@ -667,6 +665,7 @@ export default function NexusApp() {
     return () => clearInterval(iv);
   }, [token]);
 
+  if (loading) return <LoadingScreen onDone={() => setLoading(false)} />;
   if (!token || !user) return <AuthScreen onLogin={onLogin} />;
 
   const nav = [
