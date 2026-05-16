@@ -636,7 +636,6 @@ export default function NexusApp() {
   const [token, setToken] = useState(() => localStorage.getItem("nx_t") || "");
   const [user, setUser]   = useState(() => { try { return JSON.parse(localStorage.getItem("nx_u") || "null"); } catch { return null; } });
 
-  if (loading) return <LoadingScreen onDone={() => setLoading(false)} />;
   const [sec, setSec]     = useState("messages");
   const [rooms, setRooms] = useState([]);
   const [dms, setDMs]     = useState([]);
@@ -645,6 +644,8 @@ export default function NexusApp() {
   const [showCR, setCR]   = useState(false);
   const [isFirst, setIF]  = useState(false);
 
+  if (loading) return <LoadingScreen onDone={() => setLoading(false)} />;
+  
   const logout = () => { localStorage.removeItem("nx_t"); localStorage.removeItem("nx_u"); setToken(""); setUser(null); };
 
   const onLogin = (u, t, goSet) => {
