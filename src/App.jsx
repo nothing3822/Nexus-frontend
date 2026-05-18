@@ -101,6 +101,36 @@ const WALLPAPERS = [
 
 const EMOJI_REACTIONS = ["❤️", "😂", "😮", "😢", "👍", "🔥", "🎉", "💯"];
 
+// ── LAST SEEN HELPER ──────────────────────────────────────────
+function lastSeenText(lastSeen, status) {
+  if (status === "online") return null;
+  if (!lastSeen) return "Last seen: pehle";
+  const diff = Date.now() - new Date(lastSeen).getTime();
+  const mins = Math.floor(diff / 60000);
+  const hrs  = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (mins < 1)  return "Abhi abhi online tha";
+  if (mins < 60) return `Last seen ${mins} min pehle`;
+  if (hrs < 24)  return `Last seen ${hrs} ghante pehle`;
+  if (days === 1) return "Last seen kal";
+  if (days < 7)  return `Last seen ${days} din pehle`;
+  return `Last seen: ${new Date(lastSeen).toLocaleDateString("en-PK", { day: "numeric", month: "short" })}`;
+}
+
+// ── FULL EMOJI PICKER ─────────────────────────────────────────
+const EMOJI_CATS = {
+  "😊 Faces":    ["😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥸","🤩","🥳","😏","😒","😞","😔","😟","😕","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","😵","🤐","🥴","🤢","🤮","🤧","😷"],
+  "👋 Hands":    ["👋","🤚","🖐","✋","🖖","👌","🤌","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","👇","☝️","👍","👎","✊","👊","🤛","🤜","👏","🙌","👐","🤲","🤝","🙏","✍️","💅","💪","🦾"],
+  "❤️ Hearts":   ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","❤️‍🔥","❤️‍🩹"],
+  "🎉 Fun":      ["🎉","🎊","🎈","🎁","🏆","🥇","🎂","🎆","🎇","✨","⭐","🌟","💫","🔥","💥","🎯","🎮","🎲","🃏","🎵","🎶","🎤","🎸","🎹","🎺","🎻","🥁"],
+  "🐶 Animals":  ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐔","🐧","🦆","🦅","🦉","🐺","🦄","🐝","🦋","🐌","🐞","🐢","🐍","🐙","🦑","🦀","🐬","🐳","🦈","🦒","🐘","🦁","🐕","🐈"],
+  "🍕 Food":     ["🍕","🍔","🍟","🌭","🍿","🥚","🍳","🥞","🍞","🥐","🧀","🥗","🥙","🌮","🌯","🍝","🍜","🍲","🍛","🍣","🍱","🥟","🍤","🍙","🎂","🍰","🧁","🍩","🍪","🍫","🍬","🍭","🍮","🍯","🥤","☕","🍵","🧃","🥛","🍺","🍻","🥂","🍷","🥃","🍸","🍹"],
+  "⚽ Sports":   ["⚽","🏀","🏈","⚾","🎾","🏐","🏉","🎱","🏓","🏸","🥊","🥋","🎽","🛹","🎿","⛷","🏋","🤸","🧘","🏊","🚴","🏄","🧗","🎯","🏆","🥇","🥈","🥉"],
+  "🚗 Travel":   ["🚗","🚕","🚙","🚌","🏎","🚓","🚑","🚒","🛻","🏍","🛵","🚲","✈","🚀","🛸","⛵","🚢","🏖","🏝","🏔","🗻","🌋","🏕","🌁","🌃","🌆","🌇","🌉","🗽","🗼","🏰","🏯","🕌","⛩","🕍","🏛","🏗","🏘","🏚","🏠","🏡","🏢","🏣","🏤","🏥","🏦","🏧","🏨","🏩","🏪","🏫","🏬","🏭"],
+  "💡 Objects":  ["💡","🔦","🕯","🪔","💻","🖥","🖨","⌨️","🖱","🖲","💾","💿","📱","☎️","📞","📟","📠","📺","📻","🧭","⏰","⌚","📡","🔋","🔌","💈","🔭","🔬","🩺","💉","🩹","🩻","🧬","🦠","🧫","🧪","🌡","🧲","🔧","🔨","⚒","🛠","⛏","🔩","🪛","🔗","🧲","🪜","🧰","🪣","🪤","🧱","💎","🔮","🪄","🎩","🔑","🗝","🔐","🔒","🔓"],
+};
+
+
 const STATUS_OPTIONS = [
   { value: "online", label: "🟢 Online", color: "#00d4aa" },
   { value: "away", label: "🟡 Away", color: "#ffd166" },
@@ -113,6 +143,49 @@ const ac = { p: "#6c63ff", s: "#ff6b9d", g: "#00d4aa", y: "#ffd166", r: "#ff4757
 const Spin = ({ size = 20 }) => (
   <div style={{ width: size, height: size, border: `3px solid #1e223033`, borderTopColor: ac.p, borderRadius: "50%", animation: "spin .7s linear infinite", flexShrink: 0 }} />
 );
+
+// ── ANIMATED TYPING DOTS ──────────────────────────────────────
+function TypingDots({ names }) {
+  if (!names || names.length === 0) return null;
+  const label = names.length === 1 ? `${names[0]} likh raha hai` : `${names.join(", ")} likh rahe hain`;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--tx-s)", fontSize: 11, fontStyle: "italic", padding: "2px 0" }}>
+      <style>{`
+        @keyframes typingBounce {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+          30% { transform: translateY(-4px); opacity: 1; }
+        }
+      `}</style>
+      <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
+        {[0, 1, 2].map(i => (
+          <div key={i} style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--tx-s)", animation: `typingBounce 1.2s ease-in-out ${i * 0.2}s infinite` }} />
+        ))}
+      </div>
+      <span>{label}...</span>
+    </div>
+  );
+}
+
+// ── DATE DIVIDER HELPER ───────────────────────────────────────
+function getDateLabel(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  const today = new Date();
+  const yesterday = new Date(); yesterday.setDate(today.getDate() - 1);
+  if (d.toDateString() === today.toDateString()) return "Aaj";
+  if (d.toDateString() === yesterday.toDateString()) return "Kal";
+  return d.toLocaleDateString("ur-PK", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function DateDivider({ label }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "14px 0 8px" }}>
+      <div style={{ flex: 1, height: 1, background: "var(--br-d)" }} />
+      <span style={{ color: "var(--tx-m)", fontSize: 11, fontWeight: 600, background: "var(--bg-t)", padding: "3px 10px", borderRadius: 20, border: "1px solid var(--br-d)", whiteSpace: "nowrap" }}>{label}</span>
+      <div style={{ flex: 1, height: 1, background: "var(--br-d)" }} />
+    </div>
+  );
+}
 
 // ── WALLPAPER RENDERER ────────────────────────────────────────
 function WallpaperBG({ wallpaper, theme }) {
@@ -306,9 +379,9 @@ function ProfileViewModal({ user, open, onClose, currentUserId, token, onOpenDM 
         {user.email_public && (
           <div style={{ color: "var(--tx-m)", fontSize: 12, marginTop: 8 }}>📧 {user.email}</div>
         )}
-        {user.last_seen && (
+        {user.last_seen && user.status !== "online" && (
           <div style={{ color: "var(--tx-m)", fontSize: 12, marginTop: 6 }}>
-            🕒 Last seen: {new Date(user.last_seen).toLocaleString()}
+            🕒 {lastSeenText(user.last_seen, user.status)}
           </div>
         )}
         {user.id !== currentUserId && (
@@ -406,6 +479,12 @@ function SettingsPage({ user, token, onUpdate, isFirst = false, currentTheme, on
         <div style={{ background: "var(--bg-s)", borderRadius: 16, padding: 18, border: `1px solid var(--br-d)`, marginBottom: 14 }}>
           <div style={{ color: "var(--tx-m)", fontSize: 11, letterSpacing: 1.5, marginBottom: 14 }}>🎨 THEME</div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <button onClick={() => {
+              const sys = window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
+              onThemeChange(sys); localStorage.removeItem("nx_theme");
+            }} style={{ padding: "8px 16px", borderRadius: 20, border: `2px solid ${"auto" === currentTheme ? ac.p : "var(--br-d)"}`, background: "transparent", color: "var(--tx-s)", cursor: "pointer", fontSize: 13, fontWeight: 600, transition: "all .15s" }}>
+              🔄 Auto
+            </button>
             {themeList.map(([id, th]) => (
               <button key={id} onClick={() => onThemeChange(id)} style={{ padding: "8px 16px", borderRadius: 20, border: `2px solid ${currentTheme === id ? ac.p : "var(--br-d)"}`, background: currentTheme === id ? `${ac.p}22` : "transparent", color: currentTheme === id ? ac.p : "var(--tx-s)", cursor: "pointer", fontSize: 13, fontWeight: 600, transition: "all .15s" }}>
                 {id === "dark" ? "🌑" : id === "midnight" ? "🌌" : id === "forest" ? "🌿" : id === "rose" ? "🌸" : "☀️"} {th.name}
@@ -431,12 +510,71 @@ function SettingsPage({ user, token, onUpdate, isFirst = false, currentTheme, on
   );
 }
 
+// ── EMOJI PICKER ─────────────────────────────────────────────
+function EmojiPicker({ onPick, onClose }) {
+  const [cat, setCat] = useState(Object.keys(EMOJI_CATS)[0]);
+  const [search, setSearch] = useState("");
+  const catKeys = Object.keys(EMOJI_CATS);
+  const emojis = search.trim()
+    ? Object.values(EMOJI_CATS).flat().filter(e => e.includes(search))
+    : EMOJI_CATS[cat] || [];
+
+  return (
+    <div onClick={e => e.stopPropagation()}
+      style={{ position: "absolute", bottom: "100%", right: 0, zIndex: 500, background: "var(--bg-s)", border: `1px solid var(--br-d)`, borderRadius: 16, boxShadow: "0 8px 32px #0009", width: 320, marginBottom: 6, overflow: "hidden" }}>
+      {/* Search */}
+      <div style={{ padding: "10px 10px 6px" }}>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Emoji search..."
+          style={{ width: "100%", background: "var(--bg-t)", border: `1px solid var(--br-d)`, borderRadius: 8, padding: "7px 10px", color: "var(--tx-p)", fontSize: 13, outline: "none", boxSizing: "border-box" }} />
+      </div>
+      {/* Category tabs */}
+      {!search && (
+        <div style={{ display: "flex", overflowX: "auto", padding: "0 8px 6px", gap: 2, scrollbarWidth: "none" }}>
+          {catKeys.map(k => (
+            <button key={k} onClick={() => setCat(k)}
+              style={{ background: cat === k ? `${ac.p}22` : "none", border: `1px solid ${cat === k ? ac.p + "44" : "transparent"}`, borderRadius: 8, padding: "4px 7px", cursor: "pointer", fontSize: 14, whiteSpace: "nowrap", flexShrink: 0, color: cat === k ? ac.p : "var(--tx-s)" }}>
+              {k.split(" ")[0]}
+            </button>
+          ))}
+        </div>
+      )}
+      {/* Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 1, padding: "4px 8px 10px", maxHeight: 200, overflowY: "auto" }}>
+        {emojis.map((e, i) => (
+          <button key={i} onClick={() => { onPick(e); }}
+            style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, padding: "4px", borderRadius: 6, transition: "background .1s" }}
+            onMouseEnter={el => el.currentTarget.style.background = "var(--bg-h)"}
+            onMouseLeave={el => el.currentTarget.style.background = "none"}>
+            {e}
+          </button>
+        ))}
+        {emojis.length === 0 && <div style={{ gridColumn: "1/-1", color: "var(--tx-m)", fontSize: 13, textAlign: "center", padding: "16px 0" }}>Koi emoji nahi mila 😅</div>}
+      </div>
+    </div>
+  );
+}
+
 // ── MESSAGE BUBBLE ────────────────────────────────────────────
 function MsgBubble({ msg, isOwn, showName, showAvatar, onReact, onReply, onEdit, onDelete, wallpaper, currentUser }) {
   const [showReactBar, setShowReactBar] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [showSeenBy, setShowSeenBy] = useState(false);
   const reactionCounts = {};
+
+  const copyMsg = () => {
+    navigator.clipboard.writeText(msg.content || "").then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  };
   (msg.reactions || []).forEach(r => { reactionCounts[r.emoji] = (reactionCounts[r.emoji] || 0) + 1; });
+
+  // Seen by names (backend may send seen_by array)
+  const seenBy = msg.seen_by || [];
+  const seenLabel = seenBy.length > 0
+    ? `Seen: ${seenBy.map(u => u.name || u.username).join(", ")}`
+    : msg.seen_count > 0 ? `${msg.seen_count} ne dekha` : "Bheja gaya";
 
   const bubbleStyle = {
     background: isOwn ? `${ac.p}22` : "var(--bg-t)",
@@ -468,14 +606,46 @@ function MsgBubble({ msg, isOwn, showName, showAvatar, onReact, onReply, onEdit,
           onMouseEnter={() => setShowReactBar(true)}
           onContextMenu={e => { e.preventDefault(); setShowMenu(true); }}>
           {msg.is_edited && <span style={{ color: "var(--tx-m)", fontSize: 10, marginRight: 6 }}>(edited)</span>}
-          <p style={{ margin: 0, color: "var(--tx-p)", fontSize: 14, lineHeight: 1.5 }}>{msg.content}</p>
+          {/* Voice message */}
+          {msg.message_type === "voice" ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 180 }}>
+              <span style={{ fontSize: 20 }}>🎙️</span>
+              <audio controls src={msg.file_data || msg.file_url}
+                style={{ height: 32, flex: 1, accentColor: ac.p }}
+                controlsList="nodownload noplaybackrate" />
+            </div>
+          ) : msg.message_type === "image" && (msg.file_data || msg.file_url) ? (
+            <img src={msg.file_data || msg.file_url} alt="img" style={{ maxWidth: 220, maxHeight: 220, borderRadius: 10, display: "block", cursor: "pointer" }}
+              onClick={() => window.open(msg.file_data || msg.file_url, "_blank")} />
+          ) : msg.message_type === "file" ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--bg-h)", borderRadius: 8, padding: "8px 12px" }}>
+              <span style={{ fontSize: 22 }}>📎</span>
+              <div>
+                <div style={{ color: "var(--tx-p)", fontSize: 13, fontWeight: 600 }}>{msg.content || "File"}</div>
+                {(msg.file_data || msg.file_url) && <a href={msg.file_data || msg.file_url} download style={{ color: ac.p, fontSize: 11 }}>Download ↓</a>}
+              </div>
+            </div>
+          ) : (
+            <p style={{ margin: 0, color: "var(--tx-p)", fontSize: 14, lineHeight: 1.5 }}>{msg.content}</p>
+          )}
           <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 6, marginTop: 3 }}>
             <span style={{ color: "var(--tx-m)", fontSize: 10, fontFamily: "'DM Mono',monospace" }}>
               {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "now"}
             </span>
             {isOwn && (
-              <span style={{ fontSize: 12, color: msg.seen_count > 0 ? ac.g : "var(--tx-m)" }} title={msg.seen_count > 0 ? "Seen" : "Sent"}>
+              <span
+                style={{ fontSize: 12, color: msg.seen_count > 0 ? ac.g : "var(--tx-m)", cursor: "pointer", position: "relative" }}
+                onClick={() => setShowSeenBy(v => !v)}
+              >
                 {msg.seen_count > 0 ? "✓✓" : "✓"}
+                {showSeenBy && (
+                  <div style={{ position: "absolute", bottom: "120%", right: 0, background: "var(--bg-s)", border: `1px solid var(--br-d)`, borderRadius: 10, padding: "8px 12px", fontSize: 12, color: "var(--tx-p)", whiteSpace: "nowrap", boxShadow: "0 4px 16px #0006", zIndex: 100, minWidth: 120 }}>
+                    <div style={{ color: ac.g, fontWeight: 700, marginBottom: 4 }}>👁 {seenLabel}</div>
+                    {seenBy.map((u, i) => (
+                      <div key={i} style={{ color: "var(--tx-s)", fontSize: 11 }}>• {u.name || u.username}</div>
+                    ))}
+                  </div>
+                )}
               </span>
             )}
           </div>
@@ -489,6 +659,7 @@ function MsgBubble({ msg, isOwn, showName, showAvatar, onReact, onReply, onEdit,
                   onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>{emoji}</button>
               ))}
               <button onClick={() => { onReply(msg); setShowReactBar(false); }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, padding: "2px 6px", borderRadius: 8, color: "var(--tx-s)" }}>↩</button>
+              <button onClick={copyMsg} title="Copy" style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, padding: "2px 6px", borderRadius: 8, color: copied ? ac.g : "var(--tx-s)" }}>{copied ? "✓" : "📋"}</button>
               {isOwn && <button onClick={() => { onEdit(msg); setShowReactBar(false); }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, padding: "2px 6px", borderRadius: 8, color: "var(--tx-s)" }}>✏️</button>}
               {isOwn && <button onClick={() => { onDelete(msg.id); setShowReactBar(false); }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, padding: "2px 6px", borderRadius: 8, color: ac.r }}>🗑</button>}
             </div>
@@ -499,6 +670,7 @@ function MsgBubble({ msg, isOwn, showName, showAvatar, onReact, onReply, onEdit,
             <div onClick={() => setShowMenu(false)} style={{ position: "fixed", inset: 0, zIndex: 300 }}>
               <div onClick={e => e.stopPropagation()} style={{ position: "absolute", background: "var(--bg-s)", border: `1px solid var(--br-d)`, borderRadius: 12, padding: "4px 0", minWidth: 160, boxShadow: "0 8px 24px #0006", zIndex: 301 }}>
                 {[
+                  ["📋 Copy", copyMsg],
                   ["↩ Reply", () => onReply(msg)],
                   ...(isOwn ? [["✏️ Edit", () => onEdit(msg)]] : []),
                   ...(isOwn ? [["🗑 Delete", () => onDelete(msg.id)]] : []),
@@ -546,14 +718,27 @@ function ChatView({ room, currentUser, token, onBack, wallpaper, theme, onViewPr
   const [notifSound] = useState(() => localStorage.getItem("nx_sound") !== "false");
   const wsRef = useRef(null);
   const endRef = useRef(null);
+  const scrollRef = useRef(null);
   const tRef = useRef(null);
   const inputRef = useRef(null);
+  const fileRef = useRef(null);
+  const [atBottom, setAtBottom] = useState(true);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [imgPreview, setImgPreview] = useState(null);
+  // Voice recording
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordSecs, setRecordSecs] = useState(0);
+  const mediaRecRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const recordTimerRef = useRef(null);
 
   useEffect(() => {
     if (!room) return;
     setMsgs([]); setLoad(true); setReplyTo(null); setEditMsg(null); setSearchMode(false);
+    setPinnedMsg(null);
     api.get(`/rooms/${room.id}/messages`, token).then(setMsgs).catch(console.error).finally(() => setLoad(false));
-    // Load members if group
+    // Load pinned message from backend
+    api.get(`/rooms/${room.id}/pinned`, token).then(pm => { if (pm) setPinnedMsg(pm); }).catch(() => {});
     if (room.room_type !== "direct") {
       api.get(`/rooms/${room.id}/members`, token).then(setMembers).catch(() => {});
     }
@@ -585,12 +770,20 @@ function ChatView({ room, currentUser, token, onBack, wallpaper, theme, onViewPr
         setMsgs(p => p.filter(m => m.id !== e.message_id));
       } else if (e.type === "edit") {
         setMsgs(p => p.map(m => m.id === e.message_id ? { ...m, content: e.content, is_edited: true } : m));
+      } else if (e.type === "pin") {
+        setPinnedMsg({ id: e.message_id, content: e.content, message_type: e.message_type, sender_username: e.sender_username });
+        setMsgs(p => p.map(m => ({ ...m, is_pinned: m.id === e.message_id })));
+      } else if (e.type === "unpin") {
+        setPinnedMsg(null);
+        setMsgs(p => p.map(m => ({ ...m, is_pinned: false })));
       }
     };
     return () => ws.close();
   }, [room?.id, token]);
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs]);
+  useEffect(() => {
+    if (atBottom) endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs]);
 
   useEffect(() => {
     if ("Notification" in window && Notification.permission === "default") {
@@ -630,8 +823,76 @@ function ChatView({ room, currentUser, token, onBack, wallpaper, theme, onViewPr
   };
 
   const handlePin = (msg) => {
-    setPinnedMsg(msg);
+    // Send pin via WebSocket so all members see it
+    wsRef.current?.send(JSON.stringify({ type: "pin", message_id: msg.id }));
     setShowMenu(false);
+  };
+
+  const handleUnpin = () => {
+    wsRef.current?.send(JSON.stringify({ type: "unpin" }));
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      mediaRecRef.current = mr;
+      audioChunksRef.current = [];
+      mr.ondataavailable = e => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
+      mr.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        if (blob.size > 5 * 1024 * 1024) { alert("Voice message 5MB se bara hai!"); return; }
+        const reader = new FileReader();
+        reader.onload = () => {
+          wsRef.current?.send(JSON.stringify({
+            type: "message",
+            content: "",
+            message_type: "voice",
+            file_data: reader.result,
+            ...(replyTo ? { reply_to_id: replyTo.id } : {}),
+          }));
+          setReplyTo(null);
+        };
+        reader.readAsDataURL(blob);
+      };
+      mr.start();
+      setIsRecording(true);
+      setRecordSecs(0);
+      recordTimerRef.current = setInterval(() => setRecordSecs(s => s + 1), 1000);
+    } catch {
+      alert("Microphone access nahi mila!");
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecRef.current?.stop();
+    clearInterval(recordTimerRef.current);
+    setIsRecording(false);
+    setRecordSecs(0);
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert("File 5MB se choti honi chahiye!"); return; }
+    const reader = new FileReader();
+    reader.onload = () => setImgPreview({ dataUrl: reader.result, file, isImage: file.type.startsWith("image/"), name: file.name });
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const sendImage = () => {
+    if (!imgPreview || !wsRef.current) return;
+    wsRef.current.send(JSON.stringify({
+      type: "message",
+      content: imgPreview.isImage ? "" : imgPreview.name,
+      message_type: imgPreview.isImage ? "image" : "file",
+      file_data: imgPreview.dataUrl,
+      ...(replyTo ? { reply_to_id: replyTo.id } : {}),
+    }));
+    setImgPreview(null);
+    setReplyTo(null);
   };
 
   const genInv = async () => {
@@ -663,7 +924,7 @@ function ChatView({ room, currentUser, token, onBack, wallpaper, theme, onViewPr
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ color: "var(--tx-p)", fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 15 }}>{room.name}</div>
           {typing.length > 0
-            ? <div style={{ color: ac.g, fontSize: 11, fontStyle: "italic" }}>{typing.join(", ")} likh raha hai...</div>
+            ? <TypingDots names={typing} />
             : <div style={{ color: "var(--tx-m)", fontSize: 11 }}>{isDM ? "Direct Message" : `${members.length || ""} members`}</div>
           }
         </div>
@@ -712,12 +973,15 @@ function ChatView({ room, currentUser, token, onBack, wallpaper, theme, onViewPr
             <div style={{ color: ac.p, fontSize: 11, fontWeight: 700 }}>Pinned</div>
             <div style={{ color: "var(--tx-s)", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{pinnedMsg.content}</div>
           </div>
-          <button onClick={() => setPinnedMsg(null)} style={{ background: "none", border: "none", color: "var(--tx-m)", cursor: "pointer", fontSize: 14 }}>✕</button>
+          <button onClick={handleUnpin} style={{ background: "none", border: "none", color: "var(--tx-m)", cursor: "pointer", fontSize: 14 }}>✕</button>
         </div>
       )}
 
       {/* Messages area */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", scrollbarWidth: "thin", position: "relative" }}>
+      <div ref={scrollRef} onScroll={e => {
+        const el = e.currentTarget;
+        setAtBottom(el.scrollHeight - el.scrollTop - el.clientHeight < 60);
+      }} style={{ flex: 1, overflowY: "auto", padding: "14px 16px", scrollbarWidth: "thin", position: "relative" }}>
         <WallpaperBG wallpaper={wallpaper} theme={theme} />
         <div style={{ position: "relative", zIndex: 1 }}>
           {load ? <div style={{ display: "flex", justifyContent: "center", paddingTop: 40 }}><Spin size={30} /></div>
@@ -730,25 +994,39 @@ function ChatView({ room, currentUser, token, onBack, wallpaper, theme, onViewPr
             const isOwn = msg.sender_id === currentUser.id;
             const showName = !isOwn && (i === 0 || filteredMsgs[i-1].sender_id !== msg.sender_id);
             const showAvatar = showName;
+            // Date divider logic
+            const curLabel = getDateLabel(msg.created_at);
+            const prevLabel = i > 0 ? getDateLabel(filteredMsgs[i-1].created_at) : null;
+            const showDateDiv = curLabel && curLabel !== prevLabel;
             return (
-              <MsgBubble
-                key={msg.id || i}
-                msg={msg}
-                isOwn={isOwn}
-                showName={showName}
-                showAvatar={showAvatar}
-                onReact={handleReact}
-                onReply={setReplyTo}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                wallpaper={wallpaper}
-                currentUser={currentUser}
+              <div key={msg.id || i}>
+                {showDateDiv && <DateDivider label={curLabel} />}
+                <MsgBubble
+                  msg={msg}
+                  isOwn={isOwn}
+                  showName={showName}
+                  showAvatar={showAvatar}
+                  onReact={handleReact}
+                  onReply={setReplyTo}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  wallpaper={wallpaper}
+                  currentUser={currentUser}
               />
+              </div>
             );
           })}
           <div ref={endRef} />
         </div>
       </div>
+
+      {/* Scroll to bottom button */}
+      {!atBottom && (
+        <button onClick={() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); setAtBottom(true); }}
+          style={{ position: "absolute", bottom: 90, right: 20, zIndex: 50, width: 38, height: 38, borderRadius: "50%", background: "var(--bg-s)", border: `1px solid var(--br-d)`, boxShadow: "0 4px 16px #0006", cursor: "pointer", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--tx-p)", animation: "fadeIn .2s ease" }}>
+          ↓
+        </button>
+      )}
 
       {/* Reply / Edit bar */}
       {(replyTo || editMsg) && (
@@ -761,20 +1039,62 @@ function ChatView({ room, currentUser, token, onBack, wallpaper, theme, onViewPr
         </div>
       )}
 
+      {/* Voice Recording Bar */}
+      {isRecording && (
+        <div style={{ padding: "10px 14px", background: "var(--bg-s)", borderTop: `1px solid var(--br-d)`, display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: ac.r, animation: "typingBounce 1s ease-in-out infinite" }} />
+          <span style={{ color: ac.r, fontWeight: 700, fontSize: 13 }}>Recording... {Math.floor(recordSecs / 60)}:{String(recordSecs % 60).padStart(2, "0")}</span>
+          <div style={{ flex: 1 }} />
+          <button onClick={stopRecording} style={{ background: ac.r, border: "none", borderRadius: 10, padding: "8px 16px", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 13 }}>⏹ Send</button>
+          <button onClick={() => { mediaRecRef.current?.stream?.getTracks().forEach(t => t.stop()); mediaRecRef.current?.stop(); clearInterval(recordTimerRef.current); setIsRecording(false); setRecordSecs(0); audioChunksRef.current = []; }} style={{ background: "none", border: `1px solid var(--br-d)`, borderRadius: 10, padding: "8px 12px", color: "var(--tx-m)", cursor: "pointer", fontSize: 13 }}>✕ Cancel</button>
+        </div>
+      )}
+
+      {/* Image/File Preview Bar */}
+      {imgPreview && (
+        <div style={{ padding: "8px 14px", background: "var(--bg-s)", borderTop: `1px solid var(--br-d)`, display: "flex", alignItems: "center", gap: 10 }}>
+          {imgPreview.isImage
+            ? <img src={imgPreview.dataUrl} alt="" style={{ width: 52, height: 52, objectFit: "cover", borderRadius: 8, border: `1px solid var(--br-d)` }} />
+            : <div style={{ width: 52, height: 52, background: "var(--bg-t)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📎</div>
+          }
+          <div style={{ flex: 1 }}>
+            <div style={{ color: "var(--tx-p)", fontSize: 13, fontWeight: 600 }}>{imgPreview.name}</div>
+            <div style={{ color: "var(--tx-m)", fontSize: 11 }}>{(imgPreview.file.size / 1024).toFixed(1)} KB</div>
+          </div>
+          <button onClick={sendImage} style={{ background: "linear-gradient(135deg,#6c63ff,#ff6b9d)", border: "none", borderRadius: 10, padding: "9px 16px", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 13 }}>Bhejo ➤</button>
+          <button onClick={() => setImgPreview(null)} style={{ background: "none", border: "none", color: "var(--tx-m)", cursor: "pointer", fontSize: 18 }}>✕</button>
+        </div>
+      )}
+
       {/* Input */}
-      <div style={{ padding: "10px 14px", background: "var(--bg-s)", borderTop: `1px solid var(--br-d)` }}>
-        <div style={{ display: "flex", gap: 8, background: "var(--bg-t)", borderRadius: 14, border: `1px solid var(--br-d)`, padding: "6px 6px 6px 14px" }}>
+      <div style={{ padding: "10px 14px", background: "var(--bg-s)", borderTop: `1px solid var(--br-d)`, position: "relative" }}>
+        {showEmojiPicker && (
+          <div onClick={() => setShowEmojiPicker(false)} style={{ position: "fixed", inset: 0, zIndex: 499 }} />
+        )}
+        <input ref={fileRef} type="file" accept="image/*,video/*,.pdf,.doc,.docx,.zip,.txt" onChange={handleFileSelect} style={{ display: "none" }} />
+        <div style={{ display: "flex", gap: 8, background: "var(--bg-t)", borderRadius: 14, border: `1px solid var(--br-d)`, padding: "6px 6px 6px 10px", alignItems: "center" }}>
+          {/* Attach file */}
+          <button onClick={() => fileRef.current?.click()} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, padding: "0 4px", color: "var(--tx-m)", flexShrink: 0 }} title="File attach karo">📎</button>
+          {/* Voice record */}
+          <button onClick={isRecording ? stopRecording : startRecording}
+            style={{ background: isRecording ? `${ac.r}22` : "none", border: "none", cursor: "pointer", fontSize: 18, padding: "0 4px", color: isRecording ? ac.r : "var(--tx-m)", flexShrink: 0 }}
+            title={isRecording ? "Recording rok kar bhejo" : "Voice message record karo"}>🎙️</button>
           <input
             ref={inputRef}
             value={input}
             onChange={e => { setInp(e.target.value); wsRef.current?.send(JSON.stringify({ type: "typing", is_typing: true })); }}
-            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } if (e.key === "Escape") { setReplyTo(null); setEditMsg(null); setInp(""); } }}
+            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } if (e.key === "Escape") { setReplyTo(null); setEditMsg(null); setInp(""); setShowEmojiPicker(false); } }}
             onBlur={() => wsRef.current?.send(JSON.stringify({ type: "typing", is_typing: false }))}
             placeholder={editMsg ? "Edit karo..." : replyTo ? `Reply to ${replyTo.sender_name || replyTo.sender_username}...` : "Message likhain..."}
             style={{ flex: 1, background: "none", border: "none", outline: "none", color: "var(--tx-p)", fontSize: 14 }} />
-          {/* Emoji quick insert */}
-          <button onClick={() => setInp(p => p + "😊")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, padding: "0 4px", color: "var(--tx-m)" }}>😊</button>
-          <button onClick={send} disabled={!input.trim()} style={{ background: input.trim() ? "linear-gradient(135deg,#6c63ff,#ff6b9d)" : "var(--bg-h)", border: "none", borderRadius: 10, padding: "9px 14px", color: "#fff", cursor: input.trim() ? "pointer" : "default", fontSize: 15 }}>➤</button>
+          {/* Emoji picker toggle */}
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            <button onClick={() => setShowEmojiPicker(v => !v)} style={{ background: showEmojiPicker ? `${ac.p}22` : "none", border: "none", cursor: "pointer", fontSize: 18, padding: "0 4px", color: showEmojiPicker ? ac.p : "var(--tx-m)" }}>😊</button>
+            {showEmojiPicker && (
+              <EmojiPicker onPick={e => { setInp(p => p + e); inputRef.current?.focus(); }} onClose={() => setShowEmojiPicker(false)} />
+            )}
+          </div>
+          <button onClick={send} disabled={!input.trim()} style={{ background: input.trim() ? "linear-gradient(135deg,#6c63ff,#ff6b9d)" : "var(--bg-h)", border: "none", borderRadius: 10, padding: "9px 14px", color: "#fff", cursor: input.trim() ? "pointer" : "default", fontSize: 15, flexShrink: 0 }}>➤</button>
         </div>
       </div>
 
@@ -1109,9 +1429,13 @@ export default function NexusApp() {
   const [viewProfile, setViewProfile] = useState(null);
 
   // Preferences
-  const [theme, setTheme] = useState(() => localStorage.getItem("nx_theme") || "dark");
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem("nx_theme");
+    if (saved) return saved;
+    // Auto-detect system theme
+    return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  });
   const [wallpaper, setWallpaper] = useState(() => localStorage.getItem("nx_wall") || "none");
-  const [notifSound, setNotifSound] = useState(() => localStorage.getItem("nx_sound") !== "false");
   const [showWallModal, setShowWallModal] = useState(false);
 
   // Apply theme CSS vars
@@ -1251,7 +1575,12 @@ export default function NexusApp() {
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ color: "var(--tx-p)", fontWeight: 600, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{dm.name || dm.username}</div>
-                        <div style={{ color: statInfo.color, fontSize: 11 }}>{dm.custom_status || statInfo.label.split(" ").slice(1).join(" ")}</div>
+                        <div style={{ color: dm.status === "online" ? statInfo.color : "var(--tx-m)", fontSize: 11 }}>
+                          {dm.status === "online"
+                            ? (dm.custom_status || "🟢 Online")
+                            : lastSeenText(dm.last_seen, dm.status) || statInfo.label.split(" ").slice(1).join(" ")
+                          }
+                        </div>
                       </div>
                       {unread > 0 && (
                         <div style={{ background: ac.g, color: "#fff", borderRadius: "50%", width: 20, height: 20, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{unread > 9 ? "9+" : unread}</div>
